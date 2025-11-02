@@ -32,6 +32,15 @@ Wall-Following Project for NUS RB1101 Fundamentals of Robotics I
 
 3. Ensure your implementation 
 
+## Changes implemented ##
+1. improved the implementation of robust slope/intercept via least squares (avoids RankWarning from np.polyfit)
+2. Strafing instead of rotating
+    - Keep track of internal heading
+    - Based of internal heading, offset wall_scan() array using np.roll and offset movement commands
+### Challenges currently ###
+- The robot pre_vious aligns to its right wall
+- Now need to keep track of its "right" using its internal heading which affects which angles last_scan() slices from
+
 ## References ##
 RANSAC algorithm from wall_following.py uses an adapted version from https://github.com/creminem94/Advanced-Wall-Following/tree/main. All credits for the RANSAC implementation to them.
 =======
