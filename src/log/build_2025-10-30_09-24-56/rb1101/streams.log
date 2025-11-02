@@ -1,0 +1,24 @@
+[0.784s] Invoking command in '/home/maxwell-guico/rb1101/src/build/rb1101': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/maxwell-guico/rb1101/src/build/rb1101/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/maxwell-guico/rb1101/src/install/rb1101/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/maxwell-guico/rb1101/src/build/rb1101/build --no-deps symlink_data
+[1.101s] running develop
+[1.262s] running egg_info
+[1.262s] creating rb1101.egg-info
+[1.277s] writing rb1101.egg-info/PKG-INFO
+[1.277s] writing dependency_links to rb1101.egg-info/dependency_links.txt
+[1.278s] writing entry points to rb1101.egg-info/entry_points.txt
+[1.278s] writing requirements to rb1101.egg-info/requires.txt
+[1.278s] writing top-level names to rb1101.egg-info/top_level.txt
+[1.278s] writing manifest file 'rb1101.egg-info/SOURCES.txt'
+[1.309s] reading manifest file 'rb1101.egg-info/SOURCES.txt'
+[1.310s] writing manifest file 'rb1101.egg-info/SOURCES.txt'
+[1.326s] running build_ext
+[1.326s] Creating /home/maxwell-guico/rb1101/src/install/rb1101/lib/python3.12/site-packages/rb1101.egg-link (link to .)
+[1.327s] Installing wall_following script to /home/maxwell-guico/rb1101/src/install/rb1101/lib/rb1101
+[1.327s] 
+[1.327s] Installed /home/maxwell-guico/rb1101/src/build/rb1101
+[1.327s] running symlink_data
+[1.328s] creating /home/maxwell-guico/rb1101/src/install/rb1101/share/ament_index
+[1.328s] creating /home/maxwell-guico/rb1101/src/install/rb1101/share/ament_index/resource_index
+[1.328s] creating /home/maxwell-guico/rb1101/src/install/rb1101/share/ament_index/resource_index/packages
+[1.328s] symbolically linking /home/maxwell-guico/rb1101/src/build/rb1101/resource/rb1101 -> /home/maxwell-guico/rb1101/src/install/rb1101/share/ament_index/resource_index/packages
+[1.328s] symbolically linking /home/maxwell-guico/rb1101/src/build/rb1101/package.xml -> /home/maxwell-guico/rb1101/src/install/rb1101/share/rb1101
+[1.359s] Invoked command in '/home/maxwell-guico/rb1101/src/build/rb1101' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/maxwell-guico/rb1101/src/build/rb1101/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/maxwell-guico/rb1101/src/install/rb1101/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/maxwell-guico/rb1101/src/build/rb1101/build --no-deps symlink_data

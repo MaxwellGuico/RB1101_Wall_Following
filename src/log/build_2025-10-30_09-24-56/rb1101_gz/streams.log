@@ -1,0 +1,83 @@
+[0.239s] Invoking command in '/home/maxwell-guico/rb1101/src/build/rb1101_gz': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/maxwell-guico/rb1101/src/rb1110_gz -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/maxwell-guico/rb1101/src/install/rb1101_gz
+[0.316s] -- The C compiler identification is GNU 13.3.0
+[0.389s] -- The CXX compiler identification is GNU 13.3.0
+[0.411s] -- Detecting C compiler ABI info
+[0.535s] -- Detecting C compiler ABI info - done
+[0.550s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.550s] -- Detecting C compile features
+[0.550s] -- Detecting C compile features - done
+[0.562s] -- Detecting CXX compiler ABI info
+[0.696s] -- Detecting CXX compiler ABI info - done
+[0.710s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.710s] -- Detecting CXX compile features
+[0.711s] -- Detecting CXX compile features - done
+[0.714s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.912s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[1.008s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.155s] -- Configuring done (0.9s)
+[1.159s] -- Generating done (0.0s)
+[1.161s] -- Build files have been written to: /home/maxwell-guico/rb1101/src/build/rb1101_gz
+[1.170s] Invoked command in '/home/maxwell-guico/rb1101/src/build/rb1101_gz' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/maxwell-guico/rb1101/src/rb1110_gz -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/maxwell-guico/rb1101/src/install/rb1101_gz
+[1.170s] Invoking command in '/home/maxwell-guico/rb1101/src/build/rb1101_gz': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/maxwell-guico/rb1101/src/build/rb1101_gz -- -j16 -l16
+[1.230s] Invoked command in '/home/maxwell-guico/rb1101/src/build/rb1101_gz' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/maxwell-guico/rb1101/src/build/rb1101_gz -- -j16 -l16
+[1.244s] Invoking command in '/home/maxwell-guico/rb1101/src/build/rb1101_gz': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/maxwell-guico/rb1101/src/build/rb1101_gz
+[1.255s] -- Install configuration: ""
+[1.255s] -- Execute custom install script
+[1.256s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//launch/rb1101_gazebo.launch.py
+[1.269s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/ball_wheel_link.STL
+[1.280s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/base_camera_link.STL
+[1.290s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/base_laser_link.STL
+[1.300s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/base_link.STL
+[1.310s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/imu.STL
+[1.320s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/left_wheel_link.STL
+[1.331s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/back_left_wheel_link.STL
+[1.342s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/back_right_wheel_link.STL
+[1.355s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/base_camera_link.STL
+[1.365s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/base_laser_link.STL
+[1.376s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/base_link.STL
+[1.387s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/front_left_wheel_link.STL
+[1.397s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/front_right_wheel_link.STL
+[1.408s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanocar/imu.STL
+[1.418s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanorobot/ball_wheel_link.STL
+[1.427s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanorobot/base_camera_link.STL
+[1.437s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanorobot/base_laser_link.STL
+[1.447s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanorobot/base_link.STL
+[1.456s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanorobot/imu.STL
+[1.466s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanorobot/left_wheel_link.STL
+[1.475s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nanorobot/right_wheel_link.STL
+[1.485s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/materials/textures/plywood256x256.png
+[1.495s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/meshes/nist_maze_wall_120.dae
+[1.505s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/model-1_2.sdf
+[1.515s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/model-1_3.sdf
+[1.524s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/model-1_4.sdf
+[1.534s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/model.config
+[1.544s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/model.sdf
+[1.553s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/thumbnails/1.png
+[1.563s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/thumbnails/2.png
+[1.572s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/thumbnails/3.png
+[1.582s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/thumbnails/4.png
+[1.591s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/nist maze wall 120/3/thumbnails/5.png
+[1.601s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//meshes/right_wheel_link.STL
+[1.611s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//urdf/nanocar.gazebo.xacro
+[1.620s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//urdf/nanocar.urdf.xacro
+[1.630s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//urdf/nanocar_description.urdf
+[1.640s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//rviz/rb1101.rviz
+[1.649s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//worlds/empty.sdf
+[1.659s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz//worlds/rb1101_world.sdf
+[1.669s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/ament_index/resource_index/package_run_dependencies/rb1101_gz
+[1.679s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/ament_index/resource_index/parent_prefix_path/rb1101_gz
+[1.688s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/environment/ament_prefix_path.sh
+[1.698s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/environment/ament_prefix_path.dsv
+[1.709s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/environment/path.sh
+[1.718s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/environment/path.dsv
+[1.728s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/local_setup.bash
+[1.738s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/local_setup.sh
+[1.748s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/local_setup.zsh
+[1.758s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/local_setup.dsv
+[1.768s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/package.dsv
+[1.777s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/ament_index/resource_index/packages/rb1101_gz
+[1.787s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/cmake/ament_cmake_export_dependencies-extras.cmake
+[1.797s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/cmake/rb1101_gzConfig.cmake
+[1.808s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/cmake/rb1101_gzConfig-version.cmake
+[1.818s] -- Symlinking: /home/maxwell-guico/rb1101/src/install/rb1101_gz/share/rb1101_gz/package.xml
+[1.832s] Invoked command in '/home/maxwell-guico/rb1101/src/build/rb1101_gz' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/maxwell-guico/rb1101/src/build/rb1101_gz
