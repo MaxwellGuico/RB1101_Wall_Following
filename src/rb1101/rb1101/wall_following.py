@@ -8,11 +8,11 @@ from numpy.linalg import norm
 import time
 from rclpy.logging import set_logger_level, LoggingSeverity
 
-
+# Change1
 np.set_printoptions(2, suppress=True) # Print numpy arrays to specified d.p. and suppress scientific notation (e.g. 1e-5)
 set_logger_level("WallFollowingNode", level=LoggingSeverity.INFO) # Configure to either LoggingSeverity.DEBUG instead to print more details during run
 
-is_simulation = True
+is_simulation = False
 
 if is_simulation:
     # Simulation settings
@@ -42,15 +42,15 @@ else:
         ('ransac.inliers_decrease_factor', 5), # 3
         ('ransac.max_iter', 20), # 100
         ('ransac.point_distance_threshold', 0.03), # 0.01
-        ('translate_velocity', 0.2), # Feel free to toggle this speed, but be aware that the robot may miss walls at higher speeds
+        ('translate_velocity', 0.30), # Feel free to toggle this speed, but be aware that the robot may miss walls at higher speeds
         ('translate_limit', 0.4), # DO NOT CHANGE THIS LIMIT; marks will be penalised for changing irl speed limits
-        ('turn_velocity', 0.6),
+        ('turn_velocity', 0.80),
         ('turn_limit', 1.0), # DO NOT CHANGE THIS LIMIT; marks will be penalised for changing irl speed limits
-        ('diagonal_x_threshold', (0.05, 0.5)), # (min, max) thresholds for wall detection on left/right/diagonal walls
-        ('diagonal_y_threshold', (0.05, 0.5)), # (min, max) thresholds for wall detection on left/right/diagonal walls
+        ('diagonal_x_threshold', (0.07, 0.5)), # (min, max) thresholds for wall detection on left/right/diagonal walls
+        ('diagonal_y_threshold', (0.07, 0.5)), # (min, max) thresholds for wall detection on left/right/diagonal walls
         ('robot_dimensions', (0.1, 0.05)),  # Length x Width
         ('vertical_threshold', 0.25), # Front threshold distance to wall
-        ('right_wall_buffer_distance', 0.16),
+        ('right_wall_buffer_distance', 0.12),
         ('angle_tolerance', 15),
         ('slide_correction_factor', 4),
         ('turn_correction_factor', 1)
@@ -179,12 +179,9 @@ class WallFollowingNode(Node):
         self.timer = self.create_timer(0.1, self.timer_callback)  # Callback to run wall-following logic, runs at 10Hz.
 
         self.heading = 0 # Assume start facing heading 0
-        self.sector_offset = 0
         self.ransacLineParams = []
         self.cooldown = 0
         self.last_scan = None
-        self.ignore_back_right_until = 0.0
-        self.movement = [self.move_forward, self.move_left, self.move_back,self.move_right]  # Corresponding to wall_array indices 0,2,4,6]
         # Add your own variables here: Track direction?
         
         self.declare_parameters(namespace='', parameters=parameters)
@@ -286,15 +283,10 @@ class WallFollowingNode(Node):
                 x_condition = np.logical_and(diagonal_x_threshold[0] < abs(scan_slice[:,0]), abs(scan_slice[:,0]) < diagonal_x_threshold[1])
                 y_condition = np.logical_and(diagonal_y_threshold[0] < abs(scan_slice[:,1]), abs(scan_slice[:,1]) < diagonal_y_threshold[1])
                 scans_within_sector_indices = np.logical_and(x_condition, y_condition)
-            # elif idx == 2 or idx == 6: # Left or right
-            #     x_condition = np.abs(scan_slice[:,0]) < dimensions[0]
-            #     y_condition = np.abs(scan_slice[:,1]) < diagonal_y_threshold[1] * 1.3
-            #     scans_within_sector_indices = np.logical_and(x_condition, y_condition)
-            elif idx == 2 or idx == 6: # Left or right — use same sensitivity as front (mirror axes)
-                # For side sectors, compare lateral axis to vertical_threshold and
-                # constrain the longitudinal axis by robot width (dimensions[1]).
-                x_condition = np.abs(scan_slice[:,0]) < dimensions[1]           # longitudinal constrained by robot width
-                y_condition = np.abs(scan_slice[:,1]) < vertical_threshold      # lateral uses same threshold as front
+            elif idx == 2 or idx == 6: # Left or right
+                scan_slice = scan_coordinates[idx*45-20:idx*45+20]
+                x_condition = np.abs(scan_slice[:,0]) < dimensions[0]
+                y_condition = np.abs(scan_slice[:,1]) < diagonal_y_threshold[1] * 1.3
                 scans_within_sector_indices = np.logical_and(x_condition, y_condition)
             else: # Front or back
                 x_condition = np.abs(scan_slice[:,0]) < vertical_threshold
@@ -308,7 +300,7 @@ class WallFollowingNode(Node):
         # Do an extra check for the back right wall (since that's used for right-wall following) to make sure wall detected is parallel to robot
         right_corner_wall = False
         for line in self.back_right_lines:
-            if abs(line["angle"]) < 40:
+            if abs(line["angle"]) < 30:
                 x_condition = -diagonal_x_threshold[1] < max(line["p1"][0], line["p2"][0]) and min(line["p1"][0], line["p2"][0]) < -dimensions[0]
                 y_condition = -diagonal_y_threshold[1] < max(line["p1"][1], line["p2"][1]) and min(line["p1"][1], line["p2"][1]) < -dimensions[1]
                 if x_condition and y_condition and wall_detected_arr[5] == 1: # meaning there's a wall that crosses the corner right sector and is roughly parallel with the robot
@@ -316,32 +308,7 @@ class WallFollowingNode(Node):
         if right_corner_wall: wall_detected_arr[5] = 1
 
         return wall_detected_arr
-    
-    def get_sector_min_distance(self, sector_idx:int, width_deg:int=21) -> float:
-        """
-        Return the minimum range (meters) in a sector defined by sector_idx (0..7),
-        where sector 0 is front (center 0°) and each sector is 45° wide.
-        width_deg is how many degrees to sample around the sector center (default 21 -> ±10°).
-        """
-        if self.last_scan is None or self.last_scan.size == 0:
-            return float('inf')
-        scan_size = int(self.last_scan.size)
-        # compute raw sector center angle (0..359)
-        center_angle = (sector_idx * 45) % 360
-        half = max(1, width_deg // 2)
-        start_angle = int(center_angle - half) % 360
-        # build angles array and map to scan indices (handles non-360 scan sizes)
-        angles = (np.arange(start_angle, start_angle + width_deg) % 360).astype(int)
-        indices = np.floor(angles * scan_size / 360.0).astype(int) % scan_size
-        try:
-            return float(np.min(self.last_scan[indices]))
-        except Exception:
-            return float(np.min(self.last_scan))
 
-    def get_internal_right_min_distance(self, width_deg:int=21) -> float:
-        """Return min distance to the 'right' sector relative to the internal heading."""
-        raw_right_sector = (6 + self.sector_offset) % 8
-        return self.get_sector_min_distance(raw_right_sector, width_deg)
 
     def move_2D(self, x:float=0.0, y:float=0.0, turn:float=0.0):
         '''Publishes a Twist message to ROS to move a robot. Inputs are x and y linear velocities, as well as turn (z-axis yaw) angular velocity.'''
@@ -356,22 +323,6 @@ class WallFollowingNode(Node):
         self.publisher_.publish(twist_msg)  
 
 
-    # old Implementation
-    # def move_forward(self, speed:float=None, turn_offset:float=0.0, align:bool=False):
-    #     '''Uses move_2D to move forward, applying a turn component if given. If align is true, applies a y-axis twist component to maintain distance to right wall'''
-    #     translate_velocity = self.get_parameter('translate_velocity').value
-    #     if speed is None: speed = translate_velocity
-    #     right_wall_buffer_distance = self.get_parameter('right_wall_buffer_distance').value
-
-    #     slide=0.0
-    #     if align:
-    #         if right_wall_buffer_distance*3 > np.min(self.last_scan[260:280]) > right_wall_buffer_distance*1.2:
-    #             slide = -translate_velocity/self.get_parameter('slide_correction_factor').value
-    #         elif np.min(self.last_scan[260:280]) < right_wall_buffer_distance*0.8:
-    #             slide = translate_velocity/self.get_parameter('slide_correction_factor').value
-
-    #     self.move_2D(speed, slide, turn_offset)
-    # new implementation with internal sector function
     def move_forward(self, speed:float=None, turn_offset:float=0.0, align:bool=False):
         '''Uses move_2D to move forward, applying a turn component if given. If align is true, applies a y-axis twist component to maintain distance to right wall'''
         translate_velocity = self.get_parameter('translate_velocity').value
@@ -380,70 +331,19 @@ class WallFollowingNode(Node):
 
         slide=0.0
         if align:
-            right_min = self.get_internal_right_min_distance(width_deg=21)
-            if right_wall_buffer_distance*3 > right_min > right_wall_buffer_distance*1.2:
+            if right_wall_buffer_distance*3 > np.min(self.last_scan[260:280]) > right_wall_buffer_distance*1.2:
                 slide = -translate_velocity/self.get_parameter('slide_correction_factor').value
-            elif right_min < right_wall_buffer_distance*0.8:
+            elif np.min(self.last_scan[260:280]) < right_wall_buffer_distance*0.8:
                 slide = translate_velocity/self.get_parameter('slide_correction_factor').value
 
         self.move_2D(speed, slide, turn_offset)
-    
-    # Own Implementation
-    # ...existing code...
-    def move_left(self, speed:float=None, turn_offset:float=0.0, align:bool=False):
-        """Strafe left (positive y) without rotating. Optionally apply a small forward/back correction when align=True."""
-        translate_velocity = self.get_parameter('translate_velocity').value
-        if speed is None: speed = translate_velocity
-        forward_correction = 0.0
-        if align:
-            # reuse same right-wall based alignment heuristic as move_forward but apply as x (forward/back) correction
-            right_wall_buffer_distance = self.get_parameter('right_wall_buffer_distance').value
-            right_min = self.get_internal_right_min_distance(width_deg=21)
-            if right_wall_buffer_distance*3 > right_min > right_wall_buffer_distance*1.2:
-                forward_correction = -translate_velocity/self.get_parameter('slide_correction_factor').value
-            elif right_min < right_wall_buffer_distance*0.8:
-                forward_correction = translate_velocity/self.get_parameter('slide_correction_factor').value
-
-        self.move_2D(forward_correction, abs(speed), turn_offset)
-
-    def move_right(self, speed:float=None, turn_offset:float=0.0, align:bool=False):
-        """Strafe right (negative y) without rotating. Optionally apply a small forward/back correction when align=True."""
-        translate_velocity = self.get_parameter('translate_velocity').value
-        if speed is None: speed = translate_velocity
-        forward_correction = 0.0
-        if align:
-            right_wall_buffer_distance = self.get_parameter('right_wall_buffer_distance').value
-            right_min = self.get_internal_right_min_distance(width_deg=21)
-            if right_wall_buffer_distance*3 > right_min > right_wall_buffer_distance*1.2:
-                forward_correction = -translate_velocity/self.get_parameter('slide_correction_factor').value
-            elif right_min < right_wall_buffer_distance*0.8:
-                forward_correction = translate_velocity/self.get_parameter('slide_correction_factor').value
-
-        self.move_2D(forward_correction, -abs(speed), turn_offset)
-
-    def move_back(self, speed:float=None, turn_offset:float=0.0, align:bool=False):
-        """Move backwards (negative x) without rotating. Optionally apply a lateral correction when align=True."""
-        translate_velocity = self.get_parameter('translate_velocity').value
-        if speed is None: speed = translate_velocity
-        lateral_correction = 0.0
-        if align:
-            # use similar heuristic but apply as lateral (y) correction to maintain right-wall distance while backing up
-            right_wall_buffer_distance = self.get_parameter('right_wall_buffer_distance').value
-            right_min = self.get_internal_right_min_distance(width_deg=21)
-            if right_wall_buffer_distance*3 > right_min > right_wall_buffer_distance*1.2:
-                lateral_correction = -translate_velocity/self.get_parameter('slide_correction_factor').value
-            elif right_min < right_wall_buffer_distance*0.8:
-                lateral_correction = translate_velocity/self.get_parameter('slide_correction_factor').value
-
-        self.move_2D(-abs(speed), lateral_correction, turn_offset)
-
 
 
     def turn_left_90deg(self):
         '''Hardcoded 90deg turn based on turn velocity'''
         self.get_logger().debug("Turn left 90deg")
         turn_velocity = self.get_parameter('turn_velocity').value
-        for _ in range(50):
+        for _ in range(40):
             self.move_2D(0.0, 0.0, turn_velocity)
             time.sleep(0.05)
         self.get_logger().debug("Turn complete")
@@ -454,14 +354,15 @@ class WallFollowingNode(Node):
         '''Hardcoded 90deg turn based on turn velocity'''
         self.get_logger().debug("Turn right 90deg")
         turn_velocity = self.get_parameter('turn_velocity').value
-        for _ in range(50):
+        for _ in range(40):
             self.move_2D(0.0, 0.0, -turn_velocity)
             time.sleep(0.05)
         self.get_logger().debug("Turn complete")
         self.cooldown = 5
         self.last_scan = None
     
-    
+
+
     def stop(self):
         self.move_2D(0.0, 0.0, 0.0)
 
@@ -485,14 +386,8 @@ class WallFollowingNode(Node):
         self.ransacLineParams = self.front_right_lines + self.back_right_lines
         angle = self.angle_right()
         self.get_logger().debug(f"Angle right: {angle}")
-        wall_array = np.roll(self.wall_scan(), -self.sector_offset) # Rotate wall_array to match internal heading
-        if time.time() < self.ignore_back_right_until:
-            wall_array[5] = 0
-
+        wall_array = self.wall_scan()
         self.get_logger().debug(wall_array)
-        self.get_logger().info(f"Wall Scan: {self.wall_scan()}, Heading: {self.heading}")
-        self.get_logger().info(f"Wall Array: {wall_array}, Heading: {self.heading}")
-        
 
         # If angle wrt right wall exceeds threshold, 
         if angle is not None:
@@ -515,78 +410,33 @@ class WallFollowingNode(Node):
         ###### INSERT CODE HERE ######
 
         '''
-        Logic w/ rotating-based movement:
-        
+        Logic: if corner is detected
         '''
-        
-
-        # if wall_array[0]: # Wall in-front
-
-        #     self.heading += 90 # Turn Left
-        #     self.get_logger().info(f"wall back-right, turn right, heading: {self.heading}")
-        #     self.turn_left_90deg()
-
-        # elif wall_array[5] and not wall_array[6]: # Wall back-right only -> Corner
-        #     # if self.heading % 360 != 0: # for wall-following with direction
-        #     if self.heading != 0: # pledge algo
-        #         self.heading -= 90
-        #         self.get_logger().info(f"wall back-right, turn right, heading: {self.heading}")
-        #         self.turn_right_90deg()
-        #     else:
-        #         self.get_logger().info(f"wall back-right, move forward, heading: {self.heading}")
-        #         self.move_forward(turn_offset=turn_offset)
-
-        # elif wall_array[6]: # Wall right
-        #     self.get_logger().info("wall right, move forward")
-        #     self.move_forward(turn_offset=turn_offset)
-
-        # else:
-        #     self.get_logger().info("Nothing detected, moving forward")
-        #     self.move_forward(turn_offset=turn_offset)
-        
-        ''' Logic w/ holonomic movement:
-        Prioritise:
-        1. If wall in front, Rotate left internally using self.heading.
-            "Move forward" becomes move left
-            Rotate the wall_array such that idx 0 is
-        2. If wall back-right only (corner), strafe right
-        3. If wall on right, move forward while aligning to wall
-        4. Else, move forward
-            '''
-        
-        
-        self.get_logger().info(f"Wall Array: {wall_array}, Heading: {self.heading}")
-        
         if wall_array[0]: # Wall in-front
-            self.heading += 90 # Internal heading turn left
-            self.sector_offset = (self.sector_offset+2) % 8
-            wall_array = np.roll(wall_array, -self.sector_offset) # Rotate wall_array to match new heading
-            self.movement = self.movement[1:] + self.movement[:1]
-            self.get_logger().info(f"wall front, heading: {self.heading}")
-            self.movement[0](turn_offset=turn_offset, align=True)
-            self.cooldown = 3
-            self.last_scan = None
+
+            self.heading += 90 # Turn Left
+            self.get_logger().info(f"wall back-right, turn right, heading: {self.heading}")
+            self.turn_left_90deg()
+
         elif wall_array[5] and not wall_array[6]: # Wall back-right only -> Corner
             # if self.heading % 360 != 0: # for wall-following with direction
             if self.heading != 0: # pledge algo
                 self.heading -= 90
-                self.sector_offset = (self.sector_offset-2) % 8
-                wall_array = np.roll(wall_array, -self.sector_offset) # Rotate wall_array to match new heading
-                self.movement = self.movement[-1:] + self.movement[:-1] 
-                self.get_logger().info(f"corner detected, heading: {self.heading}")
-                self.movement[0](turn_offset=turn_offset, align=True)
-                self.cooldown = 3
-                self.last_scan = None
-                self.ignore_back_right_until = time.time() + 3
+                self.get_logger().info(f"wall back-right, turn right, heading: {self.heading}")
+                self.turn_right_90deg()
             else:
                 self.get_logger().info(f"wall back-right, move forward, heading: {self.heading}")
-                self.movement[0](turn_offset=turn_offset, align=True)
+                self.move_forward(turn_offset=turn_offset, align=True)
+
+        elif wall_array[6]: # Wall right
+            self.get_logger().info("wall right, move forward")
+            self.move_forward(turn_offset=turn_offset, align=True)
+
         else:
             self.get_logger().info("Nothing detected, moving forward")
-            self.movement[0](turn_offset=turn_offset, align=True)
-
-        
-
+            self.move_forward(turn_offset=turn_offset)
+        ##### INSERT CODE HERE ######
+    
 def main(args=None):
     rclpy.init(args=args)
     wall_following_node = WallFollowingNode(parameters)

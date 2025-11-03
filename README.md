@@ -37,6 +37,8 @@ Wall-Following Project for NUS RB1101 Fundamentals of Robotics I
 2. Strafing instead of rotating
     - Keep track of internal heading
     - Based of internal heading, offset wall_scan() array using np.roll and offset movement commands
+3. ('diagonal_x_threshold', (0.2, 0.5)), # (min, max) thresholds for wall detection on left/right/diagonal walls
+   ('diagonal_y_threshold', (0.2, 0.5)), # (min, max) thresholds for wall detection on left/right/diagonal walls
 ### Challenges currently ###
 - The robot pre_vious aligns to its right wall
 - Now need to keep track of its "right" using its internal heading which affects which angles last_scan() slices from
